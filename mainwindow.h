@@ -6,6 +6,8 @@
 #define UNTITLED5_MAINWINDOW_H
 
 #include <QWidget>
+#include <QMessageBox>
+#include <QInputDialog>
 #include <iostream>
 #include "Database.h"
 #include "validation.h"
@@ -27,7 +29,7 @@ public slots:
     void on_getDataButt_clicked();
     void on_searchDataButt_clicked();
     void on_deleteEntryButt_clicked();
-    void on_modifyDataButt_clicked();
+    void on_addEntryButt_clicked();
     void on_dataView_cellDoubleClicked(int i, int j);
     void on_dataView_cellChanged(int i, int j);
 

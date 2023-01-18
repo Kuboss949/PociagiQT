@@ -14,7 +14,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(untitled5 src/main.cpp mainwindow.cpp mainwindow.ui src/Train.cpp src/PassengerTrain.cpp src/CargoTrain.cpp src/Entry.cpp src/DateAndTime.cpp include/DateAndTime.h src/Database.cpp include/Database.h include/validation.h src/validation.cpp)
+add_executable(untitled5 src/main.cpp mainwindow.cpp mainwindow.ui src/Train.cpp src/PassengerTrain.cpp src/CargoTrain.cpp src/Entry.cpp src/DateAndTime.cpp include/DateAndTime.h src/Database.cpp include/Database.h include/validation.h src/validation.cpp inputpassengertrain.cpp inputpassengertrain.h inputpassengertrain.ui inputcargotrain.cpp inputcargotrain.h inputcargotrain.ui)
 target_include_directories(untitled5 PUBLIC include)
 target_link_libraries(untitled5
         Qt::Core

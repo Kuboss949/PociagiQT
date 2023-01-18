@@ -130,9 +130,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="modifyDataButt">
+       <widget class="QPushButton" name="addEntryButt">
         <property name="text">
-         <string>Modify Data</string>
+         <string>Add Entry</string>
         </property>
        </widget>
       </item>

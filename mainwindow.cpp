@@ -50,8 +50,15 @@ void MainWindow::on_deleteEntryButt_clicked() {
 
 }
 
-void MainWindow::on_modifyDataButt_clicked() {
-
+void MainWindow::on_addEntryButt_clicked() {
+    const QSignalBlocker block(ui->dataView);
+    ui->dataView->insertRow( ui->dataView->rowCount() );
+    QTableWidgetItem *item;
+    for(int j=0; j<ui->dataView->columnCount(); j++){
+        item = new QTableWidgetItem;
+        item->setText(QString::fromStdString("N/A"));
+        ui->dataView->setItem(ui->dataView->rowCount()-1,j, item);
+    }
 }
 
 void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
@@ -59,12 +66,16 @@ void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
 }
 
 void MainWindow::on_dataView_cellChanged(int i, int j) {
+    if(i>=database.getDataSize()){
+        database.createEntry();
+    }
     if(j==0){
         DateAndTime newDate;
         if(validateDateAndHour(ui->dataView->item(i,j)->text().toStdString(), newDate)){
             database.getEntryAtIndex(i)->setArrival(newDate);
         }else{
             ui->dataView->item(i,j)->setText(tmp);
+            QMessageBox::information(this, "Invalid Data", "Date have to be in DD-MM-YYYY HH:MM format!");
         }
     }else if(j==1){
         DateAndTime newDate;
@@ -72,6 +83,7 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             database.getEntryAtIndex(i)->setDeparture(newDate);
         }else{
             ui->dataView->item(i,j)->setText(tmp);
+            QMessageBox::information(this, "Invalid Data", "Date have to be in DD-MM-YYYY HH:MM format!");
         }
     }else if(j==2){
         string newDest = ui->dataView->item(i,j)->text().toStdString();
@@ -79,6 +91,7 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             database.getEntryAtIndex(i)->setDestination(newDest);
         }else{
             ui->dataView->item(i,j)->setText(tmp);
+            QMessageBox::information(this, "Invalid Data", "This field can't be empty or longer than 30 characters!");
         }
     }else if(j==3){
         string newFromWhere= ui->dataView->item(i,j)->text().toStdString();
@@ -86,12 +99,14 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             database.getEntryAtIndex(i)->setFromWhere(newFromWhere);
         }else{
             ui->dataView->item(i,j)->setText(tmp);
+            QMessageBox::information(this, "Invalid Data", "This field can't be empty or longer than 30 characters!");
         }
     }else if(j==4){
         string newPlatform= ui->dataView->item(i,j)->text().toStdString();
         for(auto i:newPlatform){
             if(isdigit(i)==0){
                 ui->dataView->item(i,j)->setText(tmp);
+                QMessageBox::information(this, "Invalid Data", "This field needs to be number!");
                 return;
             }
         }
@@ -100,9 +115,16 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             database.getEntryAtIndex(i)->setPlatformNo(newNumber);
         }else{
             ui->dataView->item(i,j)->setText(tmp);
+            QMessageBox::information(this, "Invalid Data", "This field needs to be lower than 20!");
         }
     }else{
+        bool ok;
+        QStringList items;
+        items << "Passenger" << "Cargo";
+        QString item = QInputDialog::getItem(this, "Enter Train Type","Type:", items, 0, false, &ok);
+        if(ok && !item.isEmpty()){
 
+        }
     }
 
 
