@@ -64,6 +64,21 @@ void MainWindow::on_addEntryButt_clicked() {
 
 void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
     editedData=ui->dataView->item(i,j)->text();
+    if(j==5){
+        bool ok;
+        QStringList items;
+        items << "Passenger" << "Cargo";
+        QString item = QInputDialog::getItem(this, "Enter Train Type","Type:", items, 0, false, &ok);
+        if(ok && !item.isEmpty()){
+            if(item=="Passenger"){
+                InputPassengerTrain *input = new InputPassengerTrain(this, database.getEntryAtIndex(i)->getEntryTrain());
+                input->show();
+                ui->dataView->item(i,j)->setText(QString::fromStdString(database.getEntryAtIndex(i)->getEntryTrain()->getName()));
+            }else{
+
+            }
+        }
+    }
 }
 
 void MainWindow::on_dataView_cellChanged(int i, int j) {
@@ -76,7 +91,7 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             database.getEntryAtIndex(i)->setArrival(newDate);
         }else{
             ui->dataView->item(i,j)->setText(editedData);
-            QMessageBox::information(this, "Invalid Data", "Date have to be in DD-MM-YYYY HH:MM format!");
+            QMessageBox::warning(this, "Invalid Data", "Date have to be in DD-MM-YYYY HH:MM format!");
         }
     }else if(j==1){
         DateAndTime newDate;
@@ -84,7 +99,7 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             database.getEntryAtIndex(i)->setDeparture(newDate);
         }else{
             ui->dataView->item(i,j)->setText(editedData);
-            QMessageBox::information(this, "Invalid Data", "Date have to be in DD-MM-YYYY HH:MM format!");
+            QMessageBox::warning(this, "Invalid Data", "Date have to be in DD-MM-YYYY HH:MM format!");
         }
     }else if(j==2){
         string newDest = ui->dataView->item(i,j)->text().toStdString();
@@ -92,7 +107,7 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             database.getEntryAtIndex(i)->setDestination(newDest);
         }else{
             ui->dataView->item(i,j)->setText(editedData);
-            QMessageBox::information(this, "Invalid Data", "This field can't be empty or longer than 30 characters!");
+            QMessageBox::warning(this, "Invalid Data", "This field can't be empty or longer than 30 characters!");
         }
     }else if(j==3){
         string newFromWhere= ui->dataView->item(i,j)->text().toStdString();
@@ -100,14 +115,14 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             database.getEntryAtIndex(i)->setFromWhere(newFromWhere);
         }else{
             ui->dataView->item(i,j)->setText(editedData);
-            QMessageBox::information(this, "Invalid Data", "This field can't be empty or longer than 30 characters!");
+            QMessageBox::warning(this, "Invalid Data", "This field can't be empty or longer than 30 characters!");
         }
     }else if(j==4){
         string newPlatform= ui->dataView->item(i,j)->text().toStdString();
-        for(auto i:newPlatform){
-            if(isdigit(i)==0){
+        for(auto c:newPlatform){
+            if(isdigit(c)==0){
                 ui->dataView->item(i,j)->setText(editedData);
-                QMessageBox::information(this, "Invalid Data", "This field needs to be number!");
+                QMessageBox::warning(this, "Invalid Data", "This field needs to be number!");
                 return;
             }
         }
@@ -116,43 +131,40 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             database.getEntryAtIndex(i)->setPlatformNo(newNumber);
         }else{
             ui->dataView->item(i,j)->setText(editedData);
-            QMessageBox::information(this, "Invalid Data", "This field needs to be lower than 20!");
-        }
-    }else{
-        bool ok;
-        QStringList items;
-        items << "Passenger" << "Cargo";
-        QString item = QInputDialog::getItem(this, "Enter Train Type","Type:", items, 0, false, &ok);
-        if(ok && !item.isEmpty()){
-            if(item=="Passenger"){
-                InputPassengerTrain input(this, database.getEntryAtIndex(i)->getEntryTrain());
-            }
+            QMessageBox::warning(this, "Invalid Data", "This field needs to be lower than 20!");
         }
     }
 
-
-
 }
 
-void MainWindow::on_dataView_cellClicked(int i, int j) {
-currRow=i;
+void MainWindow::on_dataView_cellPressed(int i, int j) {
+    currRow=i;
 }
 
 void MainWindow::on_infoButt_clicked() {
     QString info;
-    if(dynamic_cast<PassengerTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain())!=nullptr){
+    if(currRow==-1){
+        QMessageBox::warning(this, "Error", "Select row first!");
+    }else if(dynamic_cast<PassengerTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain())!=nullptr){
         PassengerTrain *tmp=dynamic_cast<PassengerTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain());
         info=QString("Type: Passenger\nName: %1\nOwner: %2\nMaximum velocity: %3 km/h\nMaximum passenger number: %4\nNumber of travel classes: %5\n").
                 arg(QString::fromStdString(tmp->getName()), QString::fromStdString(tmp->getOwner())).
-                arg(tmp->getMaxVelocity()).arg(tmp->getNumOfTravelClasses()).arg(tmp->getMaxPassNumber());
+                arg(tmp->getMaxVelocity()).arg(tmp->getMaxPassNumber()).arg(tmp->getNumOfTravelClasses());
         for(int i=0; i<tmp->getNumOfTravelClasses(); i++){
-
-            info.append(QString("Class %1 capacity: %2").arg(i+1).arg(tmp->getNumOfPassAtClass(i)));
+            try {
+                info.append(QString("Class %1 capacity: %2\n").arg(i + 1).arg(tmp->getNumOfPassAtClass(i)));
+            } catch(out_of_range &err){
+                cerr << err.what() << endl;
+            }
         }
-
+        QMessageBox::information(this, "Train info", info);
+    }else if(dynamic_cast<CargoTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain())!=nullptr){
+        CargoTrain *tmp = dynamic_cast<CargoTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain());
+        info=QString("Type: Cargo\nName: %1\nOwner: %2\nMaximum velocity: %3 km/h\nCargo type: %4\nMax cargo mass: %5t\n").
+                arg(QString::fromStdString(tmp->getName()), QString::fromStdString(tmp->getOwner())).arg(tmp->getMaxVelocity()).
+                arg(QString::fromStdString(tmp->getCargoType())).arg(tmp->getMaxCargoMass());
+        QMessageBox::information(this, "Train info", info);
     }
 
 
-
-    QMessageBox::information(this, "Train info", info);
 }

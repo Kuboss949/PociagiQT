@@ -74,12 +74,12 @@
       </column>
       <column>
        <property name="text">
-        <string>TO</string>
+        <string>FROM</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>FROM</string>
+        <string>TO</string>
        </property>
       </column>
       <column>
@@ -190,7 +190,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="infoButton">
+       <widget class="QPushButton" name="infoButt">
         <property name="text">
          <string>Get Train Info</string>
         </property>

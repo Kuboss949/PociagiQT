@@ -6,6 +6,7 @@
 #define UNTITLED5_INPUTPASSENGERTRAIN_H
 
 #include <QDialog>
+#include <QMessageBox>
 #include "Train.h"
 #include "CargoTrain.h"
 #include "PassengerTrain.h"
@@ -21,10 +22,14 @@ public:
     explicit InputPassengerTrain(QWidget *parent = nullptr, Train* entryTrain=nullptr);
 
     ~InputPassengerTrain() override;
+public slots:
+    void on_confirmButton_clicked();
+    void on_cancelButton_clicked();
 
 private:
     Ui::InputPassengerTrain *ui;
     PassengerTrain *entryTrain;
+    Train* originalTrain;
 };
 
 

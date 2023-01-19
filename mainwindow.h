@@ -34,7 +34,7 @@ public slots:
     void on_addEntryButt_clicked();
     void on_dataView_cellDoubleClicked(int i, int j);
     void on_dataView_cellChanged(int i, int j);
-    void on_dataView_cellClicked(int i, int j);
+    void on_dataView_cellPressed(int i, int j);
 
 private:
     Ui::MainWindow *ui;
