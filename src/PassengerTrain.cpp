@@ -97,3 +97,9 @@ PassengerTrain::PassengerTrain(const PassengerTrain &train):Train(train) {
     *this->maxPassInClass=*train.maxPassInClass;
 }
 
+int PassengerTrain::getNumOfPassAtClass(int index) {
+    if(index<0 || index>numOfTravelClasses)
+        throw out_of_range("Invalid index, too few travel classes!");
+    return maxPassInClass[index];
+}
+

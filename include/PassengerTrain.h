@@ -20,6 +20,7 @@ public:
     int getMaxPassNumber();
     void setNumOfTravelClasses(int value);
     int getNumOfTravelClasses();
+    int getNumOfPassAtClass(int index);
 
 
     void print() override;
