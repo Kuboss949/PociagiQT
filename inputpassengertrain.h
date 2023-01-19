@@ -6,7 +6,9 @@
 #define UNTITLED5_INPUTPASSENGERTRAIN_H
 
 #include <QDialog>
-
+#include "Train.h"
+#include "CargoTrain.h"
+#include "PassengerTrain.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class InputPassengerTrain; }
@@ -16,12 +18,13 @@ class InputPassengerTrain : public QDialog {
 Q_OBJECT
 
 public:
-    explicit InputPassengerTrain(QWidget *parent = nullptr);
+    explicit InputPassengerTrain(QWidget *parent = nullptr, Train* entryTrain=nullptr);
 
     ~InputPassengerTrain() override;
 
 private:
     Ui::InputPassengerTrain *ui;
+    PassengerTrain *entryTrain;
 };
 
 

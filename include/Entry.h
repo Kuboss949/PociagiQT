@@ -49,4 +49,7 @@ public:
 
     void setPlatformNo(int platformNo);
 
+    Train* getEntryTrain();
+
+
 };

@@ -123,7 +123,9 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
         items << "Passenger" << "Cargo";
         QString item = QInputDialog::getItem(this, "Enter Train Type","Type:", items, 0, false, &ok);
         if(ok && !item.isEmpty()){
-
+            if(item=="Passenger"){
+                InputPassengerTrain input(this, database.getEntryAtIndex(i)->getEntryTrain());
+            }
         }
     }
 

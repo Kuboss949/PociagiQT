@@ -179,3 +179,7 @@ int Entry::getPlatformNo() const {
 void Entry::setPlatformNo(int platformNo) {
     Entry::platformNo = platformNo;
 }
+
+Train *Entry::getEntryTrain() {
+    return entryTrain;
+}
