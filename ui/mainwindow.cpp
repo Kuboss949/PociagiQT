@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent, std::string fileName) :
     database.setFile(fileName);
     ui->setupUi(this);
     currRow=-1;
+    ui->dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 MainWindow::~MainWindow() {
@@ -22,7 +23,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_saveDataButt_clicked() {
-    //ui->dataView->addItem("Hello");
+    database.saveRecords();
 }
 
 void MainWindow::on_getDataButt_clicked() {
@@ -74,10 +75,11 @@ void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
             if(item=="Passenger"){
                 InputPassengerTrain *input = new InputPassengerTrain(this, database.getEntryAtIndex(i));
                 input->exec();
-                ui->dataView->item(i,j)->setText(QString::fromStdString(database.getEntryAtIndex(i)->getEntryTrain()->getName()));
             }else{
-
+                InputCargoTrain *input = new InputCargoTrain(this, database.getEntryAtIndex(i));
+                input->exec();
             }
+            ui->dataView->item(i,j)->setText(QString::fromStdString(database.getEntryAtIndex(i)->getEntryTrain()->getName()));
         }
     }
 }

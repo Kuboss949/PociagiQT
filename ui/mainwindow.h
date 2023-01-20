@@ -12,6 +12,7 @@
 #include "Database.h"
 #include "validation.h"
 #include "inputpassengertrain.h"
+#include "inputcargotrain.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

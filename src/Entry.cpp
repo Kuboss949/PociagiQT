@@ -165,7 +165,9 @@ Train *Entry::getEntryTrain() {
 }
 
 void Entry::setEntryTrain(Train *value) {
+    Train *old=entryTrain;
     entryTrain=value;
+    delete old;
 }
 
 Entry::~Entry() {

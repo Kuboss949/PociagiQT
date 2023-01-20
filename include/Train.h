@@ -1,6 +1,7 @@
 #pragma once
 #include<iostream>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -26,7 +27,7 @@ public:
     void setOwner(string owner);
     string getOwner();
     void setMaxVelocity(double maxVelocity);
-    double getMaxVelocity();
+    double getMaxVelocity() const;
 
 
 

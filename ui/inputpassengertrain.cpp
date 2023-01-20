@@ -14,10 +14,11 @@ InputPassengerTrain::InputPassengerTrain(QWidget *parent, Entry* editedEntry) :
 
     this->entry=editedEntry;
     this->entryTrain= dynamic_cast<PassengerTrain*>(editedEntry->getEntryTrain());
-
+    if(entry->getEntryTrain()!= nullptr){
     ui->nameEdit->setText(QString::fromStdString(editedEntry->getEntryTrain()->getName()));
     ui->ownerEdit->setText(QString::fromStdString(editedEntry->getEntryTrain()->getOwner()));
     ui->velocitySpinBox->setValue(editedEntry->getEntryTrain()->getMaxVelocity());
+    }
     if(entryTrain!= nullptr){
         ui->passengerNumSpinBox->setValue(this->entryTrain->getMaxPassNumber());
         ui->travelClassesSpinBox->setValue(this->entryTrain->getNumOfTravelClasses());

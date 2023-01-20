@@ -22,8 +22,7 @@ void Train::print()
 
 void Train::setName(string value)
 {
-    for (int i=0; i<value.length(); i++)
-        toupper(value[i]);
+    transform(value.begin(), value.end(), value.begin(), ::toupper);
     this->name = value;
 }
 
@@ -47,7 +46,7 @@ void Train::setMaxVelocity(double value)
     this->maxVelocity = value;
 }
 
-double Train::getMaxVelocity()
+double Train::getMaxVelocity() const
 {
     return maxVelocity;
 }
