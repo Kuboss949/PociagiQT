@@ -13,6 +13,7 @@ class Database {
 public:
     Database();
     Database(const string &fileName);
+    ~Database();
 
     void loadRecords();
     void saveRecords();

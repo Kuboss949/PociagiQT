@@ -7,9 +7,8 @@
 
 #include <QDialog>
 #include <QMessageBox>
-#include "Train.h"
-#include "CargoTrain.h"
-#include "PassengerTrain.h"
+#include "validation.h"
+#include "Entry.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class InputPassengerTrain; }
@@ -19,7 +18,7 @@ class InputPassengerTrain : public QDialog {
 Q_OBJECT
 
 public:
-    explicit InputPassengerTrain(QWidget *parent = nullptr, Train* entryTrain=nullptr);
+    explicit InputPassengerTrain(QWidget *parent = nullptr, Entry* editedEntry=nullptr);
 
     ~InputPassengerTrain() override;
 public slots:
@@ -29,7 +28,7 @@ public slots:
 private:
     Ui::InputPassengerTrain *ui;
     PassengerTrain *entryTrain;
-    Train* originalTrain;
+    Entry* entry;
 };
 
 

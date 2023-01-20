@@ -79,14 +79,6 @@ void Entry::readFromBinFile(ifstream &stream) {
     entryTrain->readFromBinFile(stream);
 }
 
-void Entry::getTrainInfo() {
-    entryTrain->print();
-}
-
-
-
-
-
 
 Entry::Entry(const Entry &entry) {
     this->arrival=entry.arrival;
@@ -115,71 +107,67 @@ string Entry::operator[](int i) {
     switch(i){
         case 0:
             return arrival.toString();
-            break;
         case 1:
             return departure.toString();
-            break;
         case 2:
             return fromWhere;
-            break;
         case 3:
             return destination;
-            break;
         case 4:
             return to_string(platformNo);
-            break;
         case 5:
             return entryTrain->getName();
-            break;
-
     }
-
-
-
-
-
 }
 
 const DateAndTime &Entry::getArrival() const {
     return arrival;
 }
 
-void Entry::setArrival(const DateAndTime &arrival) {
-    Entry::arrival = arrival;
+void Entry::setArrival(const DateAndTime &value) {
+    arrival = value;
 }
 
 const DateAndTime &Entry::getDeparture() const {
     return departure;
 }
 
-void Entry::setDeparture(const DateAndTime &departure) {
-    Entry::departure = departure;
+void Entry::setDeparture(const DateAndTime &value) {
+    departure = value;
 }
 
 const string &Entry::getFromWhere() const {
     return fromWhere;
 }
 
-void Entry::setFromWhere(const string &fromWhere) {
-    Entry::fromWhere = fromWhere;
+void Entry::setFromWhere(const string &value) {
+    fromWhere = value;
 }
 
 const string &Entry::getDestination() const {
     return destination;
 }
 
-void Entry::setDestination(const string &destination) {
-    Entry::destination = destination;
+void Entry::setDestination(const string &value) {
+    destination = value;
 }
 
 int Entry::getPlatformNo() const {
     return platformNo;
 }
 
-void Entry::setPlatformNo(int platformNo) {
-    Entry::platformNo = platformNo;
+void Entry::setPlatformNo(int value) {
+    platformNo = value;
 }
 
 Train *Entry::getEntryTrain() {
     return entryTrain;
+}
+
+void Entry::setEntryTrain(Train *value) {
+    entryTrain=value;
+}
+
+Entry::~Entry() {
+    delete entryTrain;
 }

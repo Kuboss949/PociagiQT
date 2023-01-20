@@ -4,15 +4,7 @@
 
 #include "Database.h"
 
-template <typename T>
-void enterAndValidate(T &value){
-    do{
-        cin >> value;
-        if(value<0){
-            cout << "Entered invalid data, try again" << endl;
-        }
-    }while(value<0);
-}
+
 
 
 Database::Database() {
@@ -96,4 +88,10 @@ void Database::clear() {
         delete *i;
     }
     data.clear();
+}
+
+Database::~Database() {
+    for (auto ptr : data) {
+        delete ptr;
+    }
 }

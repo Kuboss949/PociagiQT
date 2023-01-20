@@ -5,8 +5,12 @@
 
 using namespace std;
 
-bool validateDate(string str, DateAndTime &obj);
-
-bool validateHour(string str, DateAndTime &obj);
-
 bool validateDateAndHour(string str, DateAndTime &obj);
+
+template <typename T>
+bool validateString(T value){
+    if(value.size()>0&&value.size()<31){
+        return true;
+    }
+    return false;
+}

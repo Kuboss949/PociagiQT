@@ -21,35 +21,36 @@ public:
           int platformNo, Train *entryTrain);
 
     Entry(const Entry &entry);
+    ~Entry();
 
     friend ostream& operator<<(ostream &lhs, const Entry &rhs);
     string operator[](int i);
 
-    void getTrainInfo();
     void writeToBinFile(ofstream &stream);
     void readFromBinFile(ifstream &stream);
 
     const DateAndTime &getArrival() const;
 
-    void setArrival(const DateAndTime &arrival);
+    void setArrival(const DateAndTime &value);
 
     const DateAndTime &getDeparture() const;
 
-    void setDeparture(const DateAndTime &departure);
+    void setDeparture(const DateAndTime &value);
 
     const string &getFromWhere() const;
 
-    void setFromWhere(const string &fromWhere);
+    void setFromWhere(const string &value);
 
     const string &getDestination() const;
 
-    void setDestination(const string &destination);
+    void setDestination(const string &value);
 
     int getPlatformNo() const;
 
     void setPlatformNo(int platformNo);
 
     Train* getEntryTrain();
+    void setEntryTrain(Train* value);
 
 
 };

@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent, std::string fileName) :
 }
 
 MainWindow::~MainWindow() {
+    database.clear();
     delete ui;
 }
 
@@ -71,8 +72,8 @@ void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
         QString item = QInputDialog::getItem(this, "Enter Train Type","Type:", items, 0, false, &ok);
         if(ok && !item.isEmpty()){
             if(item=="Passenger"){
-                InputPassengerTrain *input = new InputPassengerTrain(this, database.getEntryAtIndex(i)->getEntryTrain());
-                input->show();
+                InputPassengerTrain *input = new InputPassengerTrain(this, database.getEntryAtIndex(i));
+                input->exec();
                 ui->dataView->item(i,j)->setText(QString::fromStdString(database.getEntryAtIndex(i)->getEntryTrain()->getName()));
             }else{
 

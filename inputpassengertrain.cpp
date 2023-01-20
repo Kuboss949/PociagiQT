@@ -8,29 +8,28 @@
 #include "ui_InputPassengerTrain.h"
 
 
-InputPassengerTrain::InputPassengerTrain(QWidget *parent, Train* editedTrain) :
+InputPassengerTrain::InputPassengerTrain(QWidget *parent, Entry* editedEntry) :
         QDialog(parent), ui(new Ui::InputPassengerTrain) {
     ui->setupUi(this);
-    this->entryTrain= dynamic_cast<PassengerTrain*>(editedTrain);
 
-    ui->nameEdit->setText(QString::fromStdString(editedTrain->getName()));
-    ui->ownerEdit->setText(QString::fromStdString(editedTrain->getOwner()));
-    ui->velocitySpinBox->setValue(editedTrain->getMaxVelocity());
+    this->entry=editedEntry;
+    this->entryTrain= dynamic_cast<PassengerTrain*>(editedEntry->getEntryTrain());
+
+    ui->nameEdit->setText(QString::fromStdString(editedEntry->getEntryTrain()->getName()));
+    ui->ownerEdit->setText(QString::fromStdString(editedEntry->getEntryTrain()->getOwner()));
+    ui->velocitySpinBox->setValue(editedEntry->getEntryTrain()->getMaxVelocity());
     if(entryTrain!= nullptr){
         ui->passengerNumSpinBox->setValue(this->entryTrain->getMaxPassNumber());
         ui->travelClassesSpinBox->setValue(this->entryTrain->getNumOfTravelClasses());
-    }else{
-        originalTrain=new Train(*editedTrain);
     }
 }
 
 InputPassengerTrain::~InputPassengerTrain() {
     delete ui;
-    delete originalTrain;
 }
 
 void InputPassengerTrain::on_confirmButton_clicked() {
-    if(ui->nameEdit->toPlainText().size()>0 && ui->nameEdit->toPlainText().size()<30 && ui->ownerEdit->toPlainText().size()>0 && ui->ownerEdit->toPlainText().size()<30){
+    if(validateString(ui->nameEdit->toPlainText()) && validateString(ui->ownerEdit->toPlainText())){
         if(entryTrain!= nullptr){
             entryTrain->setName(ui->nameEdit->toPlainText().toStdString());
             entryTrain->setOwner(ui->ownerEdit->toPlainText().toStdString());
@@ -38,11 +37,10 @@ void InputPassengerTrain::on_confirmButton_clicked() {
             entryTrain->setMaxPassNumber(ui->passengerNumSpinBox->value());
             entryTrain->setNumOfTravelClasses(ui->travelClassesSpinBox->value());
         }else{
-            PassengerTrain *newTrain = new PassengerTrain(ui->nameEdit->toPlainText().toStdString(),ui->ownerEdit->toPlainText().toStdString(),
+            Train *newTrain = new PassengerTrain(ui->nameEdit->toPlainText().toStdString(),ui->ownerEdit->toPlainText().toStdString(),
                                                           ui->velocitySpinBox->value(),ui->passengerNumSpinBox->value(),
                                                           ui->travelClassesSpinBox->value());
-            delete originalTrain;
-            originalTrain=newTrain;
+            entry->setEntryTrain(newTrain);
         }
         this->close();
     }else{
