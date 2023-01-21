@@ -21,6 +21,7 @@ public:
 
     void printRecords();
     void createEntry();
+    void deleteEntry(int i);
     Entry *getEntryAtIndex(int i);
     string getStringAtIndex(int entryIndex, int strIndex);
     int getDataSize();

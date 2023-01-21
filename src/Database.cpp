@@ -72,12 +72,12 @@ Entry *Database::getEntryAtIndex(int i) {
     return data[i];
 }
 
-string Database::getStringAtIndex(int entryIndex, int strIndex) {
+/*string Database::getStringAtIndex(int entryIndex, int strIndex) {
     if(entryIndex<0 || entryIndex>=data.size() || strIndex<0 || strIndex>5){
         throw out_of_range("Invalid index!");
     }
     return data[entryIndex][0][strIndex];
-}
+}*/
 
 int Database::getDataSize() {
     return data.size();
@@ -94,4 +94,12 @@ Database::~Database() {
     for (auto ptr : data) {
         delete ptr;
     }
+}
+
+void Database::deleteEntry(int i) {
+    if(i<0 || i>data.size()){
+        throw out_of_range("Invalid index");
+    }
+    delete data[i];
+    data.erase(data.begin()+i);
 }

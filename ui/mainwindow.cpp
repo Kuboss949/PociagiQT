@@ -11,10 +11,26 @@
 
 MainWindow::MainWindow(QWidget *parent, std::string fileName) :
         QWidget(parent), ui(new Ui::MainWindow) {
+    //QResource::registerResource("../ui/resources.qrc");
     database.setFile(fileName);
     ui->setupUi(this);
     currRow=-1;
     ui->dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    QPalette palette = this->palette();
+    palette.setBrush(QPalette::Window, QBrush(QPixmap(":/graphics/background.png")));
+    this->setPalette(palette);
+    ui->saveDataButt->setIcon(QIcon(":/graphics/save.png"));
+    ui->saveDataButt->setIconSize(QSize(35, 35));
+    ui->getDataButt->setIcon(QIcon(":/graphics/file.png"));
+    ui->getDataButt->setIconSize(QSize(35, 35));
+    ui->searchDataButt->setIcon(QIcon(":/graphics/search.png"));
+    ui->searchDataButt->setIconSize(QSize(35, 35));
+    ui->addEntryButt->setIcon(QIcon(":/graphics/add.png"));
+    ui->addEntryButt->setIconSize(QSize(35, 35));
+    ui->deleteEntryButt->setIcon(QIcon(":/graphics/delete.png"));
+    ui->deleteEntryButt->setIconSize(QSize(35, 35));
+    ui->infoButt->setIcon(QIcon(":/graphics/trainInfo.png"));
+    ui->infoButt->setIconSize(QSize(35, 35));
 }
 
 MainWindow::~MainWindow() {
@@ -40,17 +56,48 @@ void MainWindow::on_getDataButt_clicked() {
     for(int i=0; i<database.getDataSize(); i++){
         for(int j=0; j<ui->dataView->columnCount(); j++){
             item = new QTableWidgetItem;
-            item->setText(QString::fromStdString(database.getStringAtIndex(i, j)));
+            item->setText(QString::fromStdString(database.getEntryAtIndex(i)[0][j]));
             ui->dataView->setItem(i,j, item);
         }
     }
 }
 
 void MainWindow::on_searchDataButt_clicked() {
+    bool ok;
+    QStringList items;
+    items << "Date \"DD-MM-YYYY\" format" << "Date and time \"DD-MM-YYYY HH:MM\" format" << "Point of departure" << "Destination" << "Platform Number" << "Train name";
+    QString searchTypeStr = QInputDialog::getItem(this, "Select type of searched value","Type:", items, 0, false, &ok);
+    if(ok && !searchTypeStr.isEmpty()){
+        int searchType = searchTypeStr=="Date \"DD-MM-YYYY\" format"?0:searchTypeStr=="Date and time \"DD-MM-YYYY HH:MM\" format"?1:searchTypeStr=="Point of departure"?2:
+                                                                                                                                    searchTypeStr=="Destination"?3:searchTypeStr=="Platform Number"?4:5;
+        QString searchValue=QInputDialog::getText(this, "Select type of searched value","Type:", QLineEdit::Normal, QString(), &ok);
+        if(ok){
+            for(int i=0; i<database.getDataSize(); i++){
+                if(searchType==0){
+                    if(database.getEntryAtIndex(i)[0][searchType].substr(0,10)!=searchValue.toStdString()){
+                        ui->dataView->hideRow(i);
+                    }
+                }else{
+                    if(database.getEntryAtIndex(i)[0][searchType]!=searchValue.toStdString()) {
+                        ui->dataView->hideRow(i);
+                    }
+                }
+            }
+        }
+    }
 }
 
 void MainWindow::on_deleteEntryButt_clicked() {
-
+    if(currRow==-1){
+        QMessageBox::warning(this, "Error", "Select row first!");
+    }else{
+        try{
+            database.deleteEntry(currRow);
+        }catch(out_of_range &err){
+            cerr << err.what() << endl;
+        }
+        ui->dataView->removeRow(currRow);
+    }
 }
 
 void MainWindow::on_addEntryButt_clicked() {

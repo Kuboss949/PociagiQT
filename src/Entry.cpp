@@ -110,13 +110,15 @@ string Entry::operator[](int i) {
         case 1:
             return departure.toString();
         case 2:
-            return fromWhere;
-        case 3:
             return destination;
+        case 3:
+            return fromWhere;
         case 4:
             return to_string(platformNo);
         case 5:
             return entryTrain->getName();
+        default:
+            return " ";
     }
 }
 

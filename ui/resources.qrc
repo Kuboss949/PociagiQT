@@ -1,0 +1,12 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/">
+        <file>graphics/background.png</file>
+        <file>graphics/icon.png</file>
+        <file>graphics/add.png</file>
+        <file>graphics/delete.png</file>
+        <file>graphics/file.png</file>
+        <file>graphics/save.png</file>
+        <file>graphics/trainInfo.png</file>
+        <file>graphics/search.png</file>
+    </qresource>
+</RCC>

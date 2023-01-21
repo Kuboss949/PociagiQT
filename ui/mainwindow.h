@@ -8,6 +8,8 @@
 #include <QWidget>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QResource>
+#include <QPalette>
 #include <iostream>
 #include "Database.h"
 #include "validation.h"
