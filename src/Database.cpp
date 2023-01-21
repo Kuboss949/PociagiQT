@@ -16,14 +16,13 @@ Database::Database(const string &fileName):fileName(fileName) {
 }
 
 
-void Database::loadRecords() {
+bool Database::loadRecords() {
     reading.open(fileName);
     if(!reading.good()){
-        cout << "Problem with file access!" << endl;
-        return;
+        return false;
     }
     while(!reading.eof()){
-        Entry* tmp = new Entry;
+        auto* tmp = new Entry;
         tmp->readFromBinFile(reading);
         if(tmp->getFromWhere()==""){
             delete tmp;
@@ -32,21 +31,14 @@ void Database::loadRecords() {
         data.push_back(tmp);
     }
     reading.close();
+    return true;
 }
 
 void Database::createEntry() {
-    Entry* tmp = new Entry();
+    auto* tmp = new Entry();
     data.push_back(tmp);
 }
 
-void Database::printRecords() {
-
-    //cout << "ARRIVAL TIME" << "\t" << "DEPARTURE TIME" << "\t" << "DESTINATION" << "\t" << "ORIGIN" << "\t" << "PLATFORM NO" << "\t" << "TRAIN ID" << endl;
-
-    for(int i=0;i<data.size();i++)
-        cout << *data[i];
-
-}
 
 void Database::saveRecords() {
     writing.open(fileName);
@@ -72,12 +64,6 @@ Entry *Database::getEntryAtIndex(int i) {
     return data[i];
 }
 
-/*string Database::getStringAtIndex(int entryIndex, int strIndex) {
-    if(entryIndex<0 || entryIndex>=data.size() || strIndex<0 || strIndex>5){
-        throw out_of_range("Invalid index!");
-    }
-    return data[entryIndex][0][strIndex];
-}*/
 
 int Database::getDataSize() {
     return data.size();
@@ -97,7 +83,7 @@ Database::~Database() {
 }
 
 void Database::deleteEntry(int i) {
-    if(i<0 || i>data.size()){
+    if(i<0 || i>data.size() || data.size()==0){
         throw out_of_range("Invalid index");
     }
     delete data[i];

@@ -15,16 +15,17 @@ MainWindow::MainWindow(QWidget *parent, std::string fileName) :
     database.setFile(fileName);
     ui->setupUi(this);
     currRow=-1;
+    isSearched=false;
     ui->dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    QPalette palette = this->palette();
-    palette.setBrush(QPalette::Window, QBrush(QPixmap(":/graphics/background.png")));
-    this->setPalette(palette);
+    changeBackground(this, ":/graphics/background.png");
     ui->saveDataButt->setIcon(QIcon(":/graphics/save.png"));
     ui->saveDataButt->setIconSize(QSize(35, 35));
     ui->getDataButt->setIcon(QIcon(":/graphics/file.png"));
     ui->getDataButt->setIconSize(QSize(35, 35));
     ui->searchDataButt->setIcon(QIcon(":/graphics/search.png"));
     ui->searchDataButt->setIconSize(QSize(35, 35));
+    ui->cancelSearchDataButt->setIcon(QIcon(":/graphics/cancelSearch.png"));
+    ui->cancelSearchDataButt->setIconSize(QSize(35, 35));
     ui->addEntryButt->setIcon(QIcon(":/graphics/add.png"));
     ui->addEntryButt->setIconSize(QSize(35, 35));
     ui->deleteEntryButt->setIcon(QIcon(":/graphics/delete.png"));
@@ -46,7 +47,9 @@ void MainWindow::on_getDataButt_clicked() {
     const QSignalBlocker block(ui->dataView);
     string tmp;
     database.clear();
-    database.loadRecords();
+    if(!database.loadRecords()){
+        QMessageBox::warning(this, "Error", QString("Can't open file!"));
+    }
 
     ui->dataView->clearContents();
     ui->dataView->setRowCount(0);
@@ -83,6 +86,7 @@ void MainWindow::on_searchDataButt_clicked() {
                     }
                 }
             }
+            isSearched=true;
         }
     }
 }
@@ -97,6 +101,7 @@ void MainWindow::on_deleteEntryButt_clicked() {
             cerr << err.what() << endl;
         }
         ui->dataView->removeRow(currRow);
+        currRow=-1;
     }
 }
 
@@ -104,6 +109,7 @@ void MainWindow::on_addEntryButt_clicked() {
     const QSignalBlocker block(ui->dataView);
     ui->dataView->insertRow( ui->dataView->rowCount() );
     QTableWidgetItem *item;
+    database.createEntry();
     for(int j=0; j<ui->dataView->columnCount(); j++){
         item = new QTableWidgetItem;
         item->setText(QString::fromStdString("N/A"));
@@ -120,10 +126,10 @@ void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
         QString item = QInputDialog::getItem(this, "Enter Train Type","Type:", items, 0, false, &ok);
         if(ok && !item.isEmpty()){
             if(item=="Passenger"){
-                InputPassengerTrain *input = new InputPassengerTrain(this, database.getEntryAtIndex(i));
+                auto *input = new InputPassengerTrain(this, database.getEntryAtIndex(i));
                 input->exec();
             }else{
-                InputCargoTrain *input = new InputCargoTrain(this, database.getEntryAtIndex(i));
+                auto *input = new InputCargoTrain(this, database.getEntryAtIndex(i));
                 input->exec();
             }
             ui->dataView->item(i,j)->setText(QString::fromStdString(database.getEntryAtIndex(i)->getEntryTrain()->getName()));
@@ -132,9 +138,6 @@ void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
 }
 
 void MainWindow::on_dataView_cellChanged(int i, int j) {
-    if(i>=database.getDataSize()){
-        database.createEntry();
-    }
     if(j==0){
         DateAndTime newDate;
         if(validateDateAndHour(ui->dataView->item(i,j)->text().toStdString(), newDate)){
@@ -153,19 +156,19 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
         }
     }else if(j==2){
         string newDest = ui->dataView->item(i,j)->text().toStdString();
-        if(newDest.length()>0 && newDest.length()<30){
+        if(validateString(newDest)){
             database.getEntryAtIndex(i)->setDestination(newDest);
         }else{
             ui->dataView->item(i,j)->setText(editedData);
-            QMessageBox::warning(this, "Invalid Data", "This field can't be empty or longer than 30 characters!");
+            QMessageBox::warning(this, "Invalid Data", QString("This field can't be empty or longer than %1 characters!").arg(STR_LIMIT));
         }
     }else if(j==3){
         string newFromWhere= ui->dataView->item(i,j)->text().toStdString();
-        if(newFromWhere.length()>0 && newFromWhere.length()<30){
+        if(validateString(newFromWhere)){
             database.getEntryAtIndex(i)->setFromWhere(newFromWhere);
         }else{
             ui->dataView->item(i,j)->setText(editedData);
-            QMessageBox::warning(this, "Invalid Data", "This field can't be empty or longer than 30 characters!");
+            QMessageBox::warning(this, "Invalid Data", QString("This field can't be empty or longer than %1 characters!").arg(STR_LIMIT));
         }
     }else if(j==4){
         string newPlatform= ui->dataView->item(i,j)->text().toStdString();
@@ -196,7 +199,7 @@ void MainWindow::on_infoButt_clicked() {
     if(currRow==-1){
         QMessageBox::warning(this, "Error", "Select row first!");
     }else if(dynamic_cast<PassengerTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain())!=nullptr){
-        PassengerTrain *tmp=dynamic_cast<PassengerTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain());
+        auto *tmp=dynamic_cast<PassengerTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain());
         info=QString("Type: Passenger\nName: %1\nOwner: %2\nMaximum velocity: %3 km/h\nMaximum passenger number: %4\nNumber of travel classes: %5\n").
                 arg(QString::fromStdString(tmp->getName()), QString::fromStdString(tmp->getOwner())).
                 arg(tmp->getMaxVelocity()).arg(tmp->getMaxPassNumber()).arg(tmp->getNumOfTravelClasses());
@@ -209,7 +212,7 @@ void MainWindow::on_infoButt_clicked() {
         }
         QMessageBox::information(this, "Train info", info);
     }else if(dynamic_cast<CargoTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain())!=nullptr){
-        CargoTrain *tmp = dynamic_cast<CargoTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain());
+        auto *tmp = dynamic_cast<CargoTrain*>(database.getEntryAtIndex(currRow)->getEntryTrain());
         info=QString("Type: Cargo\nName: %1\nOwner: %2\nMaximum velocity: %3 km/h\nCargo type: %4\nMax cargo mass: %5t\n").
                 arg(QString::fromStdString(tmp->getName()), QString::fromStdString(tmp->getOwner())).arg(tmp->getMaxVelocity()).
                 arg(QString::fromStdString(tmp->getCargoType())).arg(tmp->getMaxCargoMass());
@@ -217,4 +220,11 @@ void MainWindow::on_infoButt_clicked() {
     }
 
 
+}
+
+void MainWindow::on_cancelSearchDataButt_clicked() {
+    for(int i=0; i<ui->dataView->rowCount(); i++){
+        ui->dataView->showRow(i);
+    }
+    isSearched=false;
 }

@@ -12,6 +12,7 @@
 #include <QPalette>
 #include <iostream>
 #include "Database.h"
+#include "QTChngProp.h"
 #include "validation.h"
 #include "inputpassengertrain.h"
 #include "inputcargotrain.h"
@@ -32,6 +33,7 @@ public slots:
     void on_saveDataButt_clicked();
     void on_getDataButt_clicked();
     void on_searchDataButt_clicked();
+    void on_cancelSearchDataButt_clicked();
     void on_deleteEntryButt_clicked();
     void on_infoButt_clicked();
     void on_addEntryButt_clicked();
@@ -44,6 +46,7 @@ private:
     Database database;
     QString editedData;
     int currRow;
+    bool isSearched;
 };
 
 

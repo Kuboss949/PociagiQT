@@ -15,11 +15,17 @@
 
 
 int main(int argc, char *argv[]) {
+    string filename;
+    if(argc==2){
+        filename=argv[1];
+    }else{
+        filename="example1.txt";
+    }
     QApplication a(argc, argv);
     QResource::registerResource("../ui/resources.qrc");
     QIcon icon(":/graphics/icon.png");
 
-    MainWindow mainWindow;
+    MainWindow mainWindow(nullptr, filename);
     a.setWindowIcon(icon);
     mainWindow.show();
 

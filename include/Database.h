@@ -15,15 +15,13 @@ public:
     Database(const string &fileName);
     ~Database();
 
-    void loadRecords();
+    bool loadRecords();
     void saveRecords();
     void setFile(string value);
 
-    void printRecords();
     void createEntry();
     void deleteEntry(int i);
     Entry *getEntryAtIndex(int i);
-    string getStringAtIndex(int entryIndex, int strIndex);
     int getDataSize();
     void clear();
 

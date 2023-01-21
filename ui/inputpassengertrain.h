@@ -7,6 +7,7 @@
 
 #include <QDialog>
 #include <QMessageBox>
+#include "QTChngProp.h"
 #include "validation.h"
 #include "Entry.h"
 

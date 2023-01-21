@@ -10,8 +10,9 @@
 
 InputPassengerTrain::InputPassengerTrain(QWidget *parent, Entry* editedEntry) :
         QDialog(parent), ui(new Ui::InputPassengerTrain) {
-    ui->setupUi(this);
 
+    ui->setupUi(this);
+    changeBackground(this, ":/graphics/background.png");
     this->entry=editedEntry;
     this->entryTrain= dynamic_cast<PassengerTrain*>(editedEntry->getEntryTrain());
     if(entry->getEntryTrain()!= nullptr){

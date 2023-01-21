@@ -44,6 +44,8 @@ public:
 
     void readFromBinFile(ifstream &stream);
 
+    bool operator>=(const DateAndTime &rhs);
+
 
 
 };

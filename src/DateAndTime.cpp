@@ -115,4 +115,14 @@ string DateAndTime::toString() {
     return tmp;
 }
 
+bool DateAndTime::operator>=(const DateAndTime &rhs) {
+    if(year>rhs.year || year==rhs.year && (month>rhs.month || month==rhs.month && day>rhs.day)){
+        return true;
+    }else if(year==rhs.year && month==rhs.month && day==rhs.day && (hour>rhs.hour || hour==rhs.hour && minute>rhs.minute)){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 

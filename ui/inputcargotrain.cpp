@@ -11,6 +11,7 @@
 InputCargoTrain::InputCargoTrain(QWidget *parent, Entry* editedEntry) :
         QDialog(parent), ui(new Ui::InputCargoTrain) {
     ui->setupUi(this);
+    changeBackground(this, ":/graphics/background.png");
     this->entry=editedEntry;
     this->entryTrain= dynamic_cast<CargoTrain*>(editedEntry->getEntryTrain());
     if(entry->getEntryTrain()!= nullptr){

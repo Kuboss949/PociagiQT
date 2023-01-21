@@ -8,5 +8,6 @@
         <file>graphics/save.png</file>
         <file>graphics/trainInfo.png</file>
         <file>graphics/search.png</file>
+        <file>graphics/cancelSearch.png</file>
     </qresource>
 </RCC>
