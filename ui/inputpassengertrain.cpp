@@ -7,7 +7,13 @@
 #include "inputpassengertrain.h"
 #include "ui_InputPassengerTrain.h"
 
-
+/**
+ * This constructor checks if entry has an PassengerTrain as Train* pointer
+ * if yes, it assigns values to all text and spin boxes, otherwise
+ * it only assigns values to Train members
+ *
+ * It also sets window background using changeBackground(this, ":/graphics/background.png")
+ */
 InputPassengerTrain::InputPassengerTrain(QWidget *parent, Entry* editedEntry) :
         QDialog(parent), ui(new Ui::InputPassengerTrain) {
 
@@ -25,10 +31,20 @@ InputPassengerTrain::InputPassengerTrain(QWidget *parent, Entry* editedEntry) :
         ui->travelClassesSpinBox->setValue(this->entryTrain->getNumOfTravelClasses());
     }
 }
-
+/**
+ * Deconstructor deletes ui pointer
+ */
 InputPassengerTrain::~InputPassengerTrain() {
     delete ui;
 }
+/**
+ * This slots validates if every text box and if the type of train in
+ * edited entry is PassengerTrain, it changes it's values, otherwise it creates
+ * a new Train* pointer and initialize it as PassengerTrain. Then it change
+ * Entry Train pointer
+ *
+ * If any value is invalid it shows warning
+ */
 
 void InputPassengerTrain::on_confirmButton_clicked() {
     if(validateString(ui->nameEdit->toPlainText()) && validateString(ui->ownerEdit->toPlainText())){
@@ -50,6 +66,9 @@ void InputPassengerTrain::on_confirmButton_clicked() {
     }
 }
 
+/**
+ * This slot closes the window if user clicks cancel
+ */
 void InputPassengerTrain::on_cancelButton_clicked() {
     this->close();
 }

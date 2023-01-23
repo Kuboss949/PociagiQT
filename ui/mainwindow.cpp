@@ -8,14 +8,16 @@
 #include "ui_MainWindow.h"
 
 
-
+/**
+ * This constructor sets: filename for database, default values for currRow and isSearched, window background and button icons and its sizes
+ */
 MainWindow::MainWindow(QWidget *parent, std::string fileName) :
         QWidget(parent), ui(new Ui::MainWindow) {
-    //QResource::registerResource("../ui/resources.qrc");
     database.setFile(fileName);
     ui->setupUi(this);
     currRow=-1;
     isSearched=false;
+    ui->dataView->setFocusPolicy(Qt::NoFocus);
     ui->dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     changeBackground(this, ":/graphics/background.png");
     ui->saveDataButt->setIcon(QIcon(":/graphics/save.png"));
@@ -34,15 +36,25 @@ MainWindow::MainWindow(QWidget *parent, std::string fileName) :
     ui->infoButt->setIconSize(QSize(35, 35));
 }
 
+/**
+ * MainWindow deconstructor deletes ui and clear database
+ */
 MainWindow::~MainWindow() {
     database.clear();
     delete ui;
 }
 
+/**
+ * This slot saves records from database into a file
+ */
 void MainWindow::on_saveDataButt_clicked() {
     database.saveRecords();
 }
 
+/**
+ * This slot clears database, then load records, validate if this acction is successfull.
+ * Then it clears dataView table, and writes Entries to table
+ */
 void MainWindow::on_getDataButt_clicked() {
     const QSignalBlocker block(ui->dataView);
     string tmp;
@@ -65,6 +77,11 @@ void MainWindow::on_getDataButt_clicked() {
     }
 }
 
+
+/**
+ * This slot asks user for provide searched column, then asks the user for criteria and if it's doesn't meet, the program hides row.
+ * It uses getStringAtIndex(int i, string str) method to access string representation of searched value
+ */
 void MainWindow::on_searchDataButt_clicked() {
     bool ok, isShorten=false;
     QStringList items;
@@ -107,7 +124,12 @@ void MainWindow::on_searchDataButt_clicked() {
         }
     }
 }
-
+/**
+ * This slot deletes row, if currRow is -1 then it shows warning
+ * If it isn't - function tries to delete entry at currRow position
+ *
+ * After all operations, it assigns -1 value to currRow
+ */
 void MainWindow::on_deleteEntryButt_clicked() {
     if(currRow==-1){
         QMessageBox::warning(this, "Error", "Select row first!");
@@ -122,6 +144,9 @@ void MainWindow::on_deleteEntryButt_clicked() {
     }
 }
 
+/**
+ * This slot adds entry to database, then row to table and sets row values to "N/A"
+ */
 void MainWindow::on_addEntryButt_clicked() {
     const QSignalBlocker block(ui->dataView);
     ui->dataView->insertRow( ui->dataView->rowCount() );
@@ -134,6 +159,11 @@ void MainWindow::on_addEntryButt_clicked() {
     }
 }
 
+/**
+ * This slot specifies what happen when cell is double clicked
+ * For all columns it assigns cell text to editedData member
+ * For 5th column it runs an algorithm, that is used to change Train value of the given entry
+ */
 void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
     editedData=ui->dataView->item(i,j)->text();
     if(j==5){
@@ -154,6 +184,11 @@ void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
     }
 }
 
+/**
+ * This slot validates data if the cell from rows 0-4 are changed
+ * It also validates the value and if it's not valid, it sets old value to changed cell
+ * Otherwise, it changes specified Entry value
+ */
 void MainWindow::on_dataView_cellChanged(int i, int j) {
     if(j==0){
         DateAndTime newDate;
@@ -211,14 +246,25 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             QMessageBox::warning(this, "Invalid Data", "This field needs to be lower than 20!");
             ui->dataView->blockSignals(false);
         }
+    }else{
+        ui->dataView->blockSignals(true);
+        ui->dataView->item(i,j)->setText(editedData);
+        QMessageBox::warning(this, "Train edit", "To edit train you have to do it by double clicking train name cell!");
+        ui->dataView->blockSignals(false);
     }
 
 }
 
+/**
+ * This slot sets currRow to number of cell which was last time pressed
+ */
 void MainWindow::on_dataView_cellPressed(int i, int j) {
     currRow=i;
 }
 
+/**
+ * This slot displays info about train from last clicked row
+ */
 void MainWindow::on_infoButt_clicked() {
     QString info;
     if(currRow==-1){
@@ -247,6 +293,9 @@ void MainWindow::on_infoButt_clicked() {
 
 }
 
+/**
+ * This slot shows all Entries in the table reseting search
+ */
 void MainWindow::on_cancelSearchDataButt_clicked() {
     for(int i=0; i<ui->dataView->rowCount(); i++){
         ui->dataView->showRow(i);

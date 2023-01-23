@@ -23,7 +23,7 @@ bool Database::loadRecords() {
     while(!reading.eof()){
         auto* tmp = new Entry;
         tmp->readFromBinFile(reading);
-        if(tmp->getFromWhere()==""){
+        if(tmp->getFromWhere()=="" && tmp->getDestination()==""){
             delete tmp;
             break;
         }

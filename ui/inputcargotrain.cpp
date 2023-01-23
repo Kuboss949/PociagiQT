@@ -1,13 +1,13 @@
-//
-// Created by creaz on 19.01.2023.
-//
-
-// You may need to build the project (run Qt uic code generator) to get "ui_InputCargoTrain.h" resolved
-
 #include "inputcargotrain.h"
 #include "ui_InputCargoTrain.h"
 
-
+/**
+ * This constructor checks if entry has an CargoTrain as Train* pointer
+ * if yes, it assigns values to all text and spin boxes, otherwise
+ * it only assigns values to Train members
+ *
+ * It also sets window background using changeBackground(this, ":/graphics/background.png")
+ */
 InputCargoTrain::InputCargoTrain(QWidget *parent, Entry* editedEntry) :
         QDialog(parent), ui(new Ui::InputCargoTrain) {
     ui->setupUi(this);
@@ -25,9 +25,21 @@ InputCargoTrain::InputCargoTrain(QWidget *parent, Entry* editedEntry) :
     }
 }
 
+/**
+ * Deconstructor deletes ui pointer
+ */
 InputCargoTrain::~InputCargoTrain() {
     delete ui;
 }
+
+/**
+ * This slots validates if every text box and if the type of train in
+ * edited entry is CargoTrain, it changes it's values, otherwise it creates
+ * a new Train* pointer and initialize it as CargoTrain. Then it change
+ * Entry Train pointer
+ *
+ * If any value is invalid it shows warning
+ */
 
 void InputCargoTrain::on_confirmButton_clicked() {
     if(validateString(ui->nameEdit->toPlainText()) && validateString(ui->ownerEdit->toPlainText()) && validateString(ui->cargoTypeEdit->toPlainText())){
@@ -49,6 +61,9 @@ void InputCargoTrain::on_confirmButton_clicked() {
     }
 }
 
+/**
+ * This slot closes the window if user clicks cancel
+ */
 void InputCargoTrain::on_cancelButton_clicked() {
     this->close();
 }
