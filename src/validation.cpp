@@ -1,5 +1,12 @@
 #include "validation.h"
-
+/**
+ * this function checks if given string is in "DD-MM-YYYY HH:MM" format
+ * firstly it checks the length of given string, then validates digits and symbols
+ * in the next step function creates substrings out of given strings
+ * then it converts them to numbers
+ * checks if numbers are in good range
+ * sets members of given DateAndTime object
+ */
 bool validateDateAndHour(string str, DateAndTime &obj) {
     int charCount=0;
     if(str.length()!=16 || str[6]==0)

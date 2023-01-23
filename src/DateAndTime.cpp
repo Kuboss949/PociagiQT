@@ -3,7 +3,9 @@
 //
 
 #include "DateAndTime.h"
-
+/**
+ * This constructor sets default date as 01-01-2000 4:20
+ */
 DateAndTime::DateAndTime() {
     day=1;
     month=1;
@@ -12,92 +14,88 @@ DateAndTime::DateAndTime() {
     minute=20;
 }
 
+/**
+ * This constructor sets all provided members in initialization list
+ */
 DateAndTime::DateAndTime(const int &day, const int &month, const int &year, const int &hour, const int &minute):day(day),month(month),year(year),hour(hour),minute(minute) {
 
 }
 
-ostream &operator<<(ostream &lhs, const DateAndTime &rhs) {
-    if(rhs.day<10)
-        lhs << "0";
-    lhs << rhs.day << "-";
-    if(rhs.month<10)
-        lhs << "0";
-    lhs << rhs.month << "-" << rhs.year << "  ";
-    if(rhs.hour<10)
-        lhs << "0";
-    lhs << rhs.hour <<":";
-    if(rhs.minute<10)
-        lhs << "0";
-    lhs << rhs.minute;
-    return lhs;
-}
-
+/**
+ * day getter
+ */
 int DateAndTime::getDay() const {
     return day;
 }
 
+/**
+ * month getter
+ */
 int DateAndTime::getMonth() const {
     return month;
 }
 
+/**
+ * year getter
+ */
 int DateAndTime::getYear() const {
     return year;
 }
 
+/**
+ * hour getter
+ */
 int DateAndTime::getHour() const {
     return hour;
 }
 
+/**
+ * minute getter
+ */
 int DateAndTime::getMinute() const {
     return minute;
 }
 
+/**
+ * day setter
+ */
 void DateAndTime::setDay(int value) {
     day = value;
 }
 
+/**
+ * month setter
+ */
 void DateAndTime::setMonth(int value) {
     month = value;
 }
 
+/**
+ * year setter
+ */
 void DateAndTime::setYear(int value) {
     year = value;
 }
 
+/**
+ * hour setter
+ */
 void DateAndTime::setHour(int value) {
     hour = value;
 }
 
+/**
+ * minute setter
+ */
 void DateAndTime::setMinute(int value) {
     minute = value;
 }
 
-void DateAndTime::writeToBinFile(ostream &stream) {
-    if(stream.good()){
-        stream.write(reinterpret_cast<char*>(&day), sizeof(int));
-        stream.write(reinterpret_cast<char*>(&month), sizeof(int));
-        stream.write(reinterpret_cast<char*>(&year), sizeof(int));
-        stream.write(reinterpret_cast<char*>(&hour), sizeof(int));
-        stream.write(reinterpret_cast<char*>(&minute), sizeof(int));
-    }
-}
-
-void DateAndTime::readFromBinFile(ifstream &stream) {
-    if(stream.good()){
-        stream.read(reinterpret_cast<char*>(&day), sizeof(int));
-        stream.read(reinterpret_cast<char*>(&month), sizeof(int));
-        stream.read(reinterpret_cast<char*>(&year), sizeof(int));
-        stream.read(reinterpret_cast<char*>(&hour), sizeof(int));
-        stream.read(reinterpret_cast<char*>(&minute), sizeof(int));
-    }
-}
-
-DateAndTime::DateAndTime(const int &day, const int &month, const int &year):day(day),month(month),year(year) {
-    hour=4;
-    minute=20;
-}
-
-string DateAndTime::toString() {
+/**
+ * This method converts class into a string in "DD-MM-YYYY HH:MM" format
+ * If day, month, minute and hour are lower than 10, it writes 0 before their value
+ */
+string DateAndTime::toString() const{
     string tmp;
     if(day<10)
         tmp+="0";
@@ -115,13 +113,30 @@ string DateAndTime::toString() {
     return tmp;
 }
 
-bool DateAndTime::operator>=(const DateAndTime &rhs) {
-    if(year>rhs.year || year==rhs.year && (month>rhs.month || month==rhs.month && day>rhs.day)){
-        return true;
-    }else if(year==rhs.year && month==rhs.month && day==rhs.day && (hour>rhs.hour || hour==rhs.hour && minute>rhs.minute)){
-        return true;
-    }else{
-        return false;
+/**
+ * This method writes the values of DateAndTime class members into a binary file
+ */
+void DateAndTime::writeToBinFile(ostream &stream) {
+    if(stream.good()){
+        stream.write(reinterpret_cast<char*>(&day), sizeof(int));
+        stream.write(reinterpret_cast<char*>(&month), sizeof(int));
+        stream.write(reinterpret_cast<char*>(&year), sizeof(int));
+        stream.write(reinterpret_cast<char*>(&hour), sizeof(int));
+        stream.write(reinterpret_cast<char*>(&minute), sizeof(int));
+    }
+}
+
+
+/**
+ * This method reads the values of DateAndTime class members from a binary file
+ */
+void DateAndTime::readFromBinFile(ifstream &stream) {
+    if(stream.good()){
+        stream.read(reinterpret_cast<char*>(&day), sizeof(int));
+        stream.read(reinterpret_cast<char*>(&month), sizeof(int));
+        stream.read(reinterpret_cast<char*>(&year), sizeof(int));
+        stream.read(reinterpret_cast<char*>(&hour), sizeof(int));
+        stream.read(reinterpret_cast<char*>(&minute), sizeof(int));
     }
 }
 

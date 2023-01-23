@@ -1,7 +1,3 @@
-//
-// Created by creaz on 16.01.2023.
-//
-
 #ifndef UNTITLED5_MAINWINDOW_H
 #define UNTITLED5_MAINWINDOW_H
 
@@ -11,6 +7,7 @@
 #include <QResource>
 #include <QPalette>
 #include <iostream>
+#include <string>
 #include "Database.h"
 #include "QTChngProp.h"
 #include "validation.h"

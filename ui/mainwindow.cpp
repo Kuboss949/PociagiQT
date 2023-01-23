@@ -59,30 +59,47 @@ void MainWindow::on_getDataButt_clicked() {
     for(int i=0; i<database.getDataSize(); i++){
         for(int j=0; j<ui->dataView->columnCount(); j++){
             item = new QTableWidgetItem;
-            item->setText(QString::fromStdString(database.getEntryAtIndex(i)[0][j]));
+            item->setText(QString::fromStdString(database.getStringAtIndex(i, j)));
             ui->dataView->setItem(i,j, item);
         }
     }
 }
 
 void MainWindow::on_searchDataButt_clicked() {
-    bool ok;
+    bool ok, isShorten=false;
     QStringList items;
-    items << "Date \"DD-MM-YYYY\" format" << "Date and time \"DD-MM-YYYY HH:MM\" format" << "Point of departure" << "Destination" << "Platform Number" << "Train name";
+    items << "Arrival Date \"DD-MM-YYYY\" format" << "Arrival Date and time \"DD-MM-YYYY HH:MM\" format" << "Departure Date \"DD-MM-YYYY\" format" << "Departure Date and time \"DD-MM-YYYY HH:MM\" format" << "Point of departure" << "Destination" << "Platform Number" << "Train name";
     QString searchTypeStr = QInputDialog::getItem(this, "Select type of searched value","Type:", items, 0, false, &ok);
     if(ok && !searchTypeStr.isEmpty()){
-        int searchType = searchTypeStr=="Date \"DD-MM-YYYY\" format"?0:searchTypeStr=="Date and time \"DD-MM-YYYY HH:MM\" format"?1:searchTypeStr=="Point of departure"?2:
-                                                                                                                                    searchTypeStr=="Destination"?3:searchTypeStr=="Platform Number"?4:5;
+        if(searchTypeStr.contains("\"DD-MM-YYYY\""))
+            isShorten=true;
+        if(searchTypeStr.contains("Arrival")){
+            searchTypeStr="Arrival";
+        }else if(searchTypeStr.contains("Departure")){
+            searchTypeStr="Departure";
+        }
         QString searchValue=QInputDialog::getText(this, "Select type of searched value","Type:", QLineEdit::Normal, QString(), &ok);
         if(ok){
             for(int i=0; i<database.getDataSize(); i++){
-                if(searchType==0){
-                    if(database.getEntryAtIndex(i)[0][searchType].substr(0,10)!=searchValue.toStdString()){
-                        ui->dataView->hideRow(i);
+                if(isShorten){
+                    try{
+                        if(database.getStringAtIndex(i, searchTypeStr.toStdString()).substr(0,10)!=searchValue.toStdString()){
+                            ui->dataView->hideRow(i);
+                        }
+                    }catch(out_of_range &err){
+                        cerr << err.what() << endl;
+                    }catch(invalid_argument &err){
+                        cerr << err.what() << endl;
                     }
                 }else{
-                    if(database.getEntryAtIndex(i)[0][searchType]!=searchValue.toStdString()) {
-                        ui->dataView->hideRow(i);
+                    try{
+                        if(database.getStringAtIndex(i, searchTypeStr.toStdString())!=searchValue.toStdString()) {
+                            ui->dataView->hideRow(i);
+                        }
+                    }catch(out_of_range &err){
+                        cerr << err.what() << endl;
+                    }catch(invalid_argument &err){
+                        cerr << err.what() << endl;
                     }
                 }
             }
@@ -143,16 +160,20 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
         if(validateDateAndHour(ui->dataView->item(i,j)->text().toStdString(), newDate)){
             database.getEntryAtIndex(i)->setArrival(newDate);
         }else{
+            ui->dataView->blockSignals(true);
             ui->dataView->item(i,j)->setText(editedData);
             QMessageBox::warning(this, "Invalid Data", "Date have to be in DD-MM-YYYY HH:MM format!");
+            ui->dataView->blockSignals(false);
         }
     }else if(j==1){
         DateAndTime newDate;
         if(validateDateAndHour(ui->dataView->item(i,j)->text().toStdString(), newDate)){
             database.getEntryAtIndex(i)->setDeparture(newDate);
         }else{
+            ui->dataView->blockSignals(true);
             ui->dataView->item(i,j)->setText(editedData);
             QMessageBox::warning(this, "Invalid Data", "Date have to be in DD-MM-YYYY HH:MM format!");
+            ui->dataView->blockSignals(false);
         }
     }else if(j==2){
         string newDest = ui->dataView->item(i,j)->text().toStdString();
@@ -174,8 +195,10 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
         string newPlatform= ui->dataView->item(i,j)->text().toStdString();
         for(auto c:newPlatform){
             if(isdigit(c)==0){
+                ui->dataView->blockSignals(true);
                 ui->dataView->item(i,j)->setText(editedData);
                 QMessageBox::warning(this, "Invalid Data", "This field needs to be number!");
+                ui->dataView->blockSignals(false);
                 return;
             }
         }
@@ -183,8 +206,10 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
         if(newNumber>0 && newNumber<21){
             database.getEntryAtIndex(i)->setPlatformNo(newNumber);
         }else{
+            ui->dataView->blockSignals(true);
             ui->dataView->item(i,j)->setText(editedData);
             QMessageBox::warning(this, "Invalid Data", "This field needs to be lower than 20!");
+            ui->dataView->blockSignals(false);
         }
     }
 

@@ -1,15 +1,11 @@
-//
-// Created by creaz on 09.01.2023.
-//
-
 #include "Entry.h"
 
 
-Entry::Entry(const DateAndTime &arrival, const DateAndTime &departure, const string &fromWhere,
-             const string &destination, int platformNo, Train *entryTrain) : arrival(arrival), departure(departure),
-                                                                        fromWhere(fromWhere), destination(destination),
-                                                                        platformNo(platformNo), entryTrain(entryTrain) {}
-
+/**
+ * This constructor runs base DateAndTime constructor for arrival and departure members
+ * It also assigns empty strings to destination and fromWhere members
+ * It assigns 0 to platformNo and nullptr to entryTrain
+ */
 Entry::Entry() {
     arrival=DateAndTime();
     departure=DateAndTime();
@@ -18,12 +14,155 @@ Entry::Entry() {
     platformNo=0;
     entryTrain=nullptr;
 }
+/**
+ * This constructor sets every member of Entry in initialization list
+ */
+Entry::Entry(const DateAndTime &arrival, const DateAndTime &departure, const string &fromWhere,
+             const string &destination, int platformNo, Train *entryTrain) : arrival(arrival), departure(departure),
+                                                                        fromWhere(fromWhere), destination(destination),
+                                                                        platformNo(platformNo), entryTrain(entryTrain) {}
 
-ostream &operator<<(ostream &lhs, const Entry &rhs) {
-    lhs<< rhs.arrival << "\t" << rhs.departure << "\t" << rhs.destination << "\t" << rhs.fromWhere << "\t" << rhs.platformNo << "\t"<< rhs.entryTrain->getName() << endl;
-    return lhs;
+/**
+ * Entry copy constructor
+ */
+Entry::Entry(const Entry &entry) {
+    this->arrival=entry.arrival;
+    this->departure=entry.departure;
+    this->fromWhere=entry.fromWhere;
+    this->destination=entry.destination;
+    this->platformNo=entry.platformNo;
+    if (dynamic_cast<CargoTrain*>(entry.entryTrain)!= nullptr) {
+        this->entryTrain = new CargoTrain();
+    } else if (dynamic_cast<PassengerTrain*>(entry.entryTrain)!= nullptr) {
+        this->entryTrain = new PassengerTrain();
+    } else {
+        this->entryTrain= new Train();
+    }
+
+    *this->entryTrain=*entry.entryTrain;
+}
+/**
+ * Entry deconstructor in which we delete entryTrain
+ */
+Entry::~Entry() {
+    delete entryTrain;
 }
 
+/**
+ * [] operator which use switch case to choose which field we want to get as string
+ */
+string Entry::operator[](int i) {
+    switch(i){
+        case 0:
+            return arrival.toString();
+        case 1:
+            return departure.toString();
+        case 2:
+            return destination;
+        case 3:
+            return fromWhere;
+        case 4:
+            return to_string(platformNo);
+        case 5:
+            return entryTrain->getName();
+        default:
+            throw out_of_range("Invalid index");
+    }
+}
+
+/**
+ * arrival getter
+ */
+DateAndTime Entry::getArrival() const {
+    return arrival;
+}
+/**
+ * arrival setter
+ */
+void Entry::setArrival(const DateAndTime &value) {
+    arrival = value;
+}
+
+/**
+ * departure getter
+ */
+DateAndTime Entry::getDeparture() const {
+    return departure;
+}
+
+/**
+ * departure setter
+ */
+void Entry::setDeparture(const DateAndTime &value) {
+    departure = value;
+}
+
+/**
+ * fromWhere getter
+ */
+string Entry::getFromWhere() const {
+    return fromWhere;
+}
+
+/**
+ * fromWhere setter
+ */
+void Entry::setFromWhere(const string &value) {
+    fromWhere = value;
+}
+
+/**
+ * destination getter
+ */
+string Entry::getDestination() const {
+    return destination;
+}
+
+/**
+ * destination setter
+ */
+void Entry::setDestination(const string &value) {
+    destination = value;
+}
+/**
+ * platformNo getter
+ */
+int Entry::getPlatformNo() const {
+    return platformNo;
+}
+
+/**
+ * platformNo setter
+ */
+void Entry::setPlatformNo(int value) {
+    platformNo = value;
+}
+
+/**
+ * entryTrain getter
+ */
+Train *Entry::getEntryTrain() {
+    return entryTrain;
+}
+/**
+ * entryTrain setter - after assigning new value program deletes old object
+ */
+void Entry::setEntryTrain(Train *value) {
+    Train *old=entryTrain;
+    entryTrain=value;
+    delete old;
+}
+
+
+/**
+ * This method writes the value of Entry class members into a binary file
+ *
+ * In order to save strings, it firstly save it's size and then the string
+ *
+ * It uses member function writeToBinFile methods
+ *
+ * Before writing entryTrain to file program writes to file a number which define it's class. To define it it uses dynamic_cast
+ */
 void Entry::writeToBinFile(ofstream &stream){
     arrival.writeToBinFile(stream);
     departure.writeToBinFile(stream);
@@ -39,9 +178,9 @@ void Entry::writeToBinFile(ofstream &stream){
         stream.write(reinterpret_cast<char*>(&platformNo), sizeof(platformNo));
     }
     int type;
-    if (CargoTrain* cargoTrain = dynamic_cast<CargoTrain*>(entryTrain)) {
+    if (dynamic_cast<CargoTrain*>(entryTrain)!= nullptr) {
         type=2;
-    } else if (PassengerTrain* passengerTrain = dynamic_cast<PassengerTrain*>(entryTrain)) {
+    } else if (dynamic_cast<PassengerTrain*>(entryTrain)!= nullptr) {
         type=1;
     } else {
         type=0;
@@ -50,6 +189,13 @@ void Entry::writeToBinFile(ofstream &stream){
     entryTrain->writeToBinFile(stream);
 }
 
+/**
+ * This method reads the value of Entry class members from a binary file
+ *
+ * In order to read strings, it firstly reads it's size and then the resize the member and read it's value from file
+ *
+ * Before reading entryTrain we need to define it's class (Train, PassengerTrain or CargoTrain)
+ */
 void Entry::readFromBinFile(ifstream &stream) {
     int tmpSize;
     arrival.readFromBinFile(stream);
@@ -77,101 +223,4 @@ void Entry::readFromBinFile(ifstream &stream) {
         entryTrain = new CargoTrain();
     }
     entryTrain->readFromBinFile(stream);
-}
-
-
-Entry::Entry(const Entry &entry) {
-    this->arrival=entry.arrival;
-    this->departure=entry.departure;
-    this->fromWhere=entry.fromWhere;
-    this->destination=entry.destination;
-    this->platformNo=entry.platformNo;
-    if (CargoTrain* cargoTrain = dynamic_cast<CargoTrain*>(entry.entryTrain)) {
-        this->entryTrain = new CargoTrain();
-    } else if (PassengerTrain* passengerTrain = dynamic_cast<PassengerTrain*>(entry.entryTrain)) {
-        this->entryTrain = new PassengerTrain();
-    } else {
-        this->entryTrain= new Train();
-    }
-
-    *this->entryTrain=*entry.entryTrain;
-
-
-
-}
-
-string Entry::operator[](int i) {
-    if(i<0||i>5){
-        throw out_of_range("Invalid index");
-    }
-    switch(i){
-        case 0:
-            return arrival.toString();
-        case 1:
-            return departure.toString();
-        case 2:
-            return destination;
-        case 3:
-            return fromWhere;
-        case 4:
-            return to_string(platformNo);
-        case 5:
-            return entryTrain->getName();
-        default:
-            return " ";
-    }
-}
-
-const DateAndTime &Entry::getArrival() const {
-    return arrival;
-}
-
-void Entry::setArrival(const DateAndTime &value) {
-    arrival = value;
-}
-
-const DateAndTime &Entry::getDeparture() const {
-    return departure;
-}
-
-void Entry::setDeparture(const DateAndTime &value) {
-    departure = value;
-}
-
-const string &Entry::getFromWhere() const {
-    return fromWhere;
-}
-
-void Entry::setFromWhere(const string &value) {
-    fromWhere = value;
-}
-
-const string &Entry::getDestination() const {
-    return destination;
-}
-
-void Entry::setDestination(const string &value) {
-    destination = value;
-}
-
-int Entry::getPlatformNo() const {
-    return platformNo;
-}
-
-void Entry::setPlatformNo(int value) {
-    platformNo = value;
-}
-
-Train *Entry::getEntryTrain() {
-    return entryTrain;
-}
-
-void Entry::setEntryTrain(Train *value) {
-    Train *old=entryTrain;
-    entryTrain=value;
-    delete old;
-}
-
-Entry::~Entry() {
-    delete entryTrain;
 }
