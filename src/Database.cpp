@@ -54,6 +54,9 @@ void Database::saveRecords() {
     }
 
     for(int i=0;i<data.size();i++){
+        if(data[i]->getFromWhere()=="" && data[i]->getDestination()==""){
+            continue;
+        }
         data[i]->writeToBinFile(writing);
     }
     writing.close();
@@ -71,7 +74,7 @@ void Database::setFile(const string &value) {
  */
 Entry *Database::getEntryAtIndex(int i) {
     if(i<0 || i>data.size()){
-        throw out_of_range("Invalid index");
+        throw WrongIndex("Invalid index");
     }
     return data[i];
 }
@@ -107,7 +110,7 @@ Database::~Database() {
  */
 void Database::deleteEntry(int i) {
     if(i<0 || i>data.size() || data.size()==0){
-        throw out_of_range("Invalid index");
+        throw WrongIndex("Invalid index");
     }
     delete data[i];
     data.erase(data.begin()+i);
@@ -119,7 +122,7 @@ void Database::deleteEntry(int i) {
  */
 string Database::getStringAtIndex(int i, int j) {
     if(i<0 || i>=data.size() || j<0 || j>5){
-        throw out_of_range("Invalid index!");
+        throw WrongIndex("Invalid index!");
     }
     return data[i][0][j];
 }
@@ -133,7 +136,7 @@ string Database::getStringAtIndex(int i, int j) {
  */
 string Database::getStringAtIndex(int i, const string &str) {
     if(i<0 || i>=data.size()){
-        throw out_of_range("Invalid index!");
+        throw WrongIndex("Invalid index!");
     }
     if(str=="Arrival"){
         return data[i][0][0];

@@ -113,11 +113,6 @@ private:
      *  @brief Stores the number of last clicked table row
      */
     int currRow;
-    /**
-     *  @property isSearched
-     *  @brief Indicates if values shown in the table are result of search or not
-     */
-    bool isSearched;
 };
 
 

@@ -16,7 +16,6 @@ MainWindow::MainWindow(QWidget *parent, std::string fileName) :
     database.setFile(fileName);
     ui->setupUi(this);
     currRow=-1;
-    isSearched=false;
     ui->dataView->setFocusPolicy(Qt::NoFocus);
     ui->dataView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     changeBackground(this, ":/graphics/background.png");
@@ -120,7 +119,6 @@ void MainWindow::on_searchDataButt_clicked() {
                     }
                 }
             }
-            isSearched=true;
         }
     }
 }
@@ -179,7 +177,9 @@ void MainWindow::on_dataView_cellDoubleClicked(int i, int j) {
                 auto *input = new InputCargoTrain(this, database.getEntryAtIndex(i));
                 input->exec();
             }
+            ui->dataView->blockSignals(true);
             ui->dataView->item(i,j)->setText(QString::fromStdString(database.getEntryAtIndex(i)->getEntryTrain()->getName()));
+            ui->dataView->blockSignals(false);
         }
     }
 }
@@ -227,7 +227,15 @@ void MainWindow::on_dataView_cellChanged(int i, int j) {
             QMessageBox::warning(this, "Invalid Data", QString("This field can't be empty or longer than %1 characters!").arg(STR_LIMIT));
         }
     }else if(j==4){
+
         string newPlatform= ui->dataView->item(i,j)->text().toStdString();
+        if(newPlatform==""){
+            ui->dataView->blockSignals(true);
+            ui->dataView->item(i,j)->setText(editedData);
+            QMessageBox::warning(this, "Invalid Data", "This field needs to be number!");
+            ui->dataView->blockSignals(false);
+            return;
+        }
         for(auto c:newPlatform){
             if(isdigit(c)==0){
                 ui->dataView->blockSignals(true);
@@ -300,5 +308,4 @@ void MainWindow::on_cancelSearchDataButt_clicked() {
     for(int i=0; i<ui->dataView->rowCount(); i++){
         ui->dataView->showRow(i);
     }
-    isSearched=false;
 }

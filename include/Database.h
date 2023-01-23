@@ -2,6 +2,7 @@
 #include <vector>
 #include "Entry.h"
 #include "validation.h"
+#include "WrongIndex.h"
 
 using namespace std;
 
