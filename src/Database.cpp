@@ -70,7 +70,7 @@ void Database::setFile(const string &value) {
 }
 
 /**
- * This function returns pointer to Entry at i index, if index is invalid, it throws out_of_range exception
+ * This function returns pointer to Entry at i index, if index is invalid, it throws WrongIndex exception
  */
 Entry *Database::getEntryAtIndex(int i) {
     if(i<0 || i>data.size()){
@@ -106,7 +106,7 @@ Database::~Database() {
 }
 
 /**
- * Method that deletes entry at i index, if index is invalid it throws out_of_range exception
+ * Method that deletes entry at i index, if index is invalid it throws WrongIndex exception
  */
 void Database::deleteEntry(int i) {
     if(i<0 || i>data.size() || data.size()==0){
@@ -132,7 +132,7 @@ string Database::getStringAtIndex(int i, int j) {
  *
  * It use Entry [] operator, for various string function returns string at different Entry indexes
  *
- * If i is invalid method throws out_of_range exception, if str is invalid it throws invalid_argument exception
+ * If i is invalid method throws WrongIndex exception, if str is invalid it throws invalid_argument exception
  */
 string Database::getStringAtIndex(int i, const string &str) {
     if(i<0 || i>=data.size()){

@@ -102,7 +102,7 @@ void MainWindow::on_searchDataButt_clicked() {
                         if(database.getStringAtIndex(i, searchTypeStr.toStdString()).substr(0,10)!=searchValue.toStdString()){
                             ui->dataView->hideRow(i);
                         }
-                    }catch(out_of_range &err){
+                    }catch(WrongIndex &err){
                         cerr << err.what() << endl;
                     }catch(invalid_argument &err){
                         cerr << err.what() << endl;
@@ -112,7 +112,7 @@ void MainWindow::on_searchDataButt_clicked() {
                         if(database.getStringAtIndex(i, searchTypeStr.toStdString())!=searchValue.toStdString()) {
                             ui->dataView->hideRow(i);
                         }
-                    }catch(out_of_range &err){
+                    }catch(WrongIndex &err){
                         cerr << err.what() << endl;
                     }catch(invalid_argument &err){
                         cerr << err.what() << endl;
@@ -134,7 +134,7 @@ void MainWindow::on_deleteEntryButt_clicked() {
     }else{
         try{
             database.deleteEntry(currRow);
-        }catch(out_of_range &err){
+        }catch(WrongIndex &err){
             cerr << err.what() << endl;
         }
         ui->dataView->removeRow(currRow);
@@ -285,7 +285,7 @@ void MainWindow::on_infoButt_clicked() {
         for(int i=0; i<tmp->getNumOfTravelClasses(); i++){
             try {
                 info.append(QString("Class %1 capacity: %2\n").arg(i + 1).arg(tmp->getNumOfPassAtClass(i)));
-            } catch(out_of_range &err){
+            } catch(WrongIndex &err){
                 cerr << err.what() << endl;
             }
         }
